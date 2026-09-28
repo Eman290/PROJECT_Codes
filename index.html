@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fauji Foods · Code Finder</title>
+<style>
+:root{--bg:#f3f8f2;--gl:#ffffff;--bd:#d3e3d2;--tx:#15301f;--mut:#5d7563;--a:#23a05a;--b:#0c5a33;--gold:#f0b429;--er:#c62828}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{background:var(--bg);color:var(--tx);font:15px/1.5 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif;overflow-x:hidden}
+body:before,body:after{content:"";position:fixed;width:520px;height:520px;border-radius:50%;filter:blur(120px);opacity:.28;z-index:-1;animation:float 14s ease-in-out infinite alternate}
+body:before{background:var(--a);top:-160px;left:-120px}
+body:after{background:var(--gold);bottom:-200px;right:-140px;animation-delay:-7s}
+@keyframes float{to{transform:translate(60px,40px) scale(1.15)}}
+main{max-width:820px;margin:0 auto;padding:48px 18px 60px}
+.brand{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.logo{display:inline-flex;align-items:center;gap:9px;padding:8px 16px;border-radius:12px;background:linear-gradient(135deg,var(--b),var(--a));color:#fff;font-weight:800;letter-spacing:.14em;font-size:15px;box-shadow:0 6px 18px rgba(12,90,51,.28)}.logo i{width:10px;height:10px;border-radius:50%;background:var(--gold);display:block}.badge{padding:4px 12px;border:1px solid var(--bd);border-radius:99px;background:var(--gl);color:var(--b);font-size:12px;letter-spacing:.12em;text-transform:uppercase}
+h1{font-size:clamp(30px,6vw,46px);margin:14px 0 6px;line-height:1.1;background:linear-gradient(90deg,var(--a),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--mut);margin:0 0 26px}
+.glass{background:var(--gl);border:1px solid var(--bd);border-top:4px solid var(--gold);border-radius:18px;padding:20px;box-shadow:0 14px 40px rgba(12,90,51,.10)}
+.tabs{display:inline-flex;gap:4px;padding:4px;border:1px solid var(--bd);border-radius:12px;margin-bottom:16px}
+.tabs button{background:none;border:0;color:var(--mut);padding:8px 16px;border-radius:9px;font:inherit;cursor:pointer}
+.tabs button.on{background:linear-gradient(90deg,var(--a),var(--b));color:#fff;font-weight:700}
+.sw{position:relative}
+.sw svg{position:absolute;left:16px;top:50%;transform:translateY(-50%);width:22px;height:22px;stroke:var(--mut)}
+input[type=text],textarea{width:100%;background:#fbfefb;border:1px solid var(--bd);border-radius:14px;color:var(--tx);font:inherit;outline:0;transition:.2s}
+input[type=text]{padding:16px 16px 16px 50px;font-size:19px;letter-spacing:.02em}
+textarea{padding:14px;min-height:130px;font-family:ui-monospace,Consolas,monospace}
+input:focus,textarea:focus{border-color:var(--a);box-shadow:0 0 0 4px rgba(35,160,90,.18),0 8px 26px rgba(35,160,90,.18)}
+.res{margin-top:16px;padding:18px;border:1px solid var(--bd);border-radius:16px;background:linear-gradient(135deg,rgba(35,160,90,.10),rgba(240,180,41,.14));animation:pop .4s both}
+@keyframes pop{from{opacity:0;transform:translateY(14px) scale(.98)}}
+.flow{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.flow span{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
+.old b{font-size:20px;color:var(--mut);text-decoration:line-through;text-decoration-color:rgba(255,122,138,.6)}
+.arrow{font-size:26px;color:var(--a)}
+.new b{font-size:clamp(28px,7vw,40px);background:linear-gradient(90deg,var(--a),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}
+.chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin:16px 0}
+.chip{padding:10px 12px;border:1px solid var(--bd);border-radius:12px;background:#f6fbf5;word-break:break-word}
+.chip span{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
+.btns{display:flex;gap:10px;flex-wrap:wrap}
+button.go{border:0;border-radius:11px;padding:10px 16px;font:inherit;font-weight:600;cursor:pointer;color:#fff;background:linear-gradient(90deg,var(--a),var(--b));transition:.15s}
+button.go:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(35,160,90,.32)}
+button.gh{background:transparent;color:var(--tx);border:1px solid var(--bd)}
+.miss{color:var(--er);margin:16px 0 4px}
+.sugg{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.sugg button{background:#fff;border:1px solid var(--bd);color:var(--tx);padding:6px 12px;border-radius:99px;font:inherit;cursor:pointer}
+.sugg button:hover{border-color:var(--a)}
+.scroll{overflow-x:auto;margin-top:16px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:9px 12px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--bd)}
+th{color:var(--b);font-size:12px;letter-spacing:.1em;text-transform:uppercase}
+td.nf{color:var(--er)}
+.stat{margin-top:18px;color:var(--mut);font-size:13px;text-align:center}.foot{margin-top:6px;text-align:center;color:var(--mut);font-size:12px;letter-spacing:.08em}
+.hide{display:none}
+#toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,30px);opacity:0;background:var(--b);color:#fff;padding:9px 18px;border-radius:99px;font-weight:700;transition:.25s;pointer-events:none}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+<main>
+  <div class="brand"><span class="logo"><i></i>FAUJI FOODS</span><span class="badge">Procurement · Code Finder</span></div>
+  <h1>Old code in. New code out.</h1>
+  <p class="sub">Type an old code to get the new code and every related detail. Copy in one click.</p>
+
+  <div class="glass">
+    <div class="tabs"><button id="t1" class="on">Single</button><button id="t2">Bulk</button></div>
+    <div id="p1">
+      <div class="sw">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input type="text" id="q" placeholder="Enter old code…" autocomplete="off" autofocus>
+      </div>
+      <div id="out"></div>
+    </div>
+    <div id="p2" class="hide">
+      <textarea id="bulk" placeholder="Paste old codes, one per line"></textarea>
+      <div class="btns" style="margin-top:12px">
+        <button class="go" id="run">Look up all</button>
+        <button class="go gh" id="copy">Copy table</button>
+      </div>
+      <div class="scroll" id="bout"></div>
+    </div>
+  </div>
+  <div class="stat" id="stat">Loading mapping…</div>
+  <div class="foot">FAUJI FOODS LIMITED · PROCUREMENT</div>
+</main>
+<div id="toast">Copied</div>
+
+<script>
+/* ===== Settings: change here if needed ===== */
+var CONFIG={oldCol:null,newCol:null}; /* null = 1st column is old code, 2nd is new code */
+
+var rows=[],cols=[],idx={},oc="",nc="";
+var $=function(i){return document.getElementById(i)};
+function norm(s){return String(s==null?"":s).trim().toUpperCase().replace(/^0+(?=.)/,"")}
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+
+function load(data,modified){
+  rows=data;
+  if(!rows.length){$("stat").textContent="The mapping is empty.";return}
+  cols=Object.keys(rows[0]);
+  oc=CONFIG.oldCol&&cols.indexOf(CONFIG.oldCol)>-1?CONFIG.oldCol:cols[0];
+  nc=CONFIG.newCol&&cols.indexOf(CONFIG.newCol)>-1?CONFIG.newCol:(cols[1]||cols[0]);
+  idx={};rows.forEach(function(r){var n=norm(r[oc]);if(n)(idx[n]=idx[n]||[]).push(r)});
+  var d=modified?new Date(modified):null;
+  $("stat").textContent=rows.length+" codes"+(d&&!isNaN(d)?" · updated "+d.toLocaleDateString(undefined,{day:"numeric",month:"short",year:"numeric"}):"");
+  single();
+}
+/* ===== Mapping data (pre-built) ===== */
+var UPDATED="2026-09-29";
+var DATA=[{"old": "111", "new": "222", "train": "G", "clr": "RED"}, {"old": "222", "new": "555", "train": "H", "clr": "PURPLE"}];
+load(DATA,UPDATED);
+
+function card(r,i){
+  var h='<article class="res" style="animation-delay:'+(i*70)+'ms"><div class="flow"><div class="old"><span>'+esc(oc)+'</span><b>'+esc(r[oc])+'</b></div><div class="arrow">→</div><div class="new"><span>'+esc(nc)+'</span><b>'+esc(r[nc])+'</b></div></div><div class="chips">';
+  cols.forEach(function(c){if(c!==oc&&c!==nc)h+='<div class="chip"><span>'+esc(c)+'</span>'+esc(r[c])+'</div>'});
+  h+='</div><div class="btns"><button class="go" data-copy="'+esc(r[nc])+'">Copy new code</button><button class="go gh" data-copy="'+esc(cols.map(function(c){return r[c]}).join("\t"))+'">Copy all details</button></div></article>';
+  return h;
+}
+function single(){
+  var v=$("q").value,o=$("out");
+  if(!v.trim()||!rows.length){o.innerHTML="";return}
+  var n=norm(v),h="";
+  if(idx[n]){idx[n].forEach(function(r,i){h+=card(r,i)})}
+  else{
+    var p=Object.keys(idx).filter(function(k){return k.indexOf(n)>-1}).slice(0,8);
+    h='<p class="miss">No exact match for “'+esc(v.trim())+'”.</p>';
+    if(p.length){h+='<div class="sugg">'+p.map(function(k){return '<button data-fill="'+esc(idx[k][0][oc])+'">'+esc(idx[k][0][oc])+'</button>'}).join("")+'</div>'}
+  }
+  o.innerHTML=h;
+}
+$("q").addEventListener("input",single);
+
+var toastT;
+function toast(){var t=$("toast");t.classList.add("on");clearTimeout(toastT);toastT=setTimeout(function(){t.classList.remove("on")},1100)}
+function copyText(s){
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(s).then(toast).catch(function(){fb(s)})}else fb(s);
+}
+function fb(s){var a=document.createElement("textarea");a.value=s;document.body.appendChild(a);a.select();try{document.execCommand("copy");toast()}catch(e){}a.remove()}
+document.addEventListener("click",function(e){
+  var t=e.target.closest("button");if(!t)return;
+  if(t.dataset.copy!==undefined)copyText(t.dataset.copy);
+  if(t.dataset.fill!==undefined){$("q").value=t.dataset.fill;single()}
+});
+
+function tab(a){
+  $("p1").classList.toggle("hide",a!==1);$("p2").classList.toggle("hide",a!==2);
+  $("t1").classList.toggle("on",a===1);$("t2").classList.toggle("on",a===2);
+}
+$("t1").onclick=function(){tab(1)};$("t2").onclick=function(){tab(2)};
+
+var tsv="";
+$("run").onclick=function(){
+  var L=$("bulk").value.split(/\r?\n/).map(function(s){return s.trim()}).filter(Boolean);
+  var head=["Searched"].concat(cols),t=[head.join("\t")];
+  var h='<table><tr>'+head.map(function(c){return '<th>'+esc(c)+'</th>'}).join("")+'</tr>';
+  L.forEach(function(c){
+    var m=idx[norm(c)];
+    if(m){m.forEach(function(r){var cells=[c].concat(cols.map(function(k){return r[k]}));
+      h+='<tr>'+cells.map(function(x){return '<td>'+esc(x)+'</td>'}).join("")+'</tr>';t.push(cells.join("\t"))})}
+    else{h+='<tr><td>'+esc(c)+'</td><td class="nf" colspan="'+cols.length+'">Not found</td></tr>';t.push(c+"\tNot found")}
+  });
+  $("bout").innerHTML=h+'</table>';tsv=t.join("\n");
+};
+$("copy").onclick=function(){if(tsv)copyText(tsv)};
+</script>
+</body>
+</html>
