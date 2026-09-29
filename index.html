@@ -75,7 +75,8 @@ td.nf{color:var(--er)}
       <textarea id="bulk" placeholder="Paste new codes, one per line"></textarea>
       <div class="btns" style="margin-top:12px">
         <button class="go" id="run">Look up all</button>
-        <button class="go gh" id="copy">Copy table</button>
+        <button class="go gh" id="copy">Copy table with headers</button>
+        <button class="go gh" id="csvb">Export CSV</button>
       </div>
       <div class="scroll" id="bout"></div>
     </div>
@@ -89,7 +90,7 @@ td.nf{color:var(--er)}
 /* ===== Settings: change here if needed ===== */
 var CONFIG={oldCol:null,newCol:null}; /* null = 1st column is old code, 2nd is new code */
 
-var rows=[],cols=[],idx={},oc="",nc="";
+var rows=[],cols=[],idx={},oc="",nc="",lastRows=[];
 var $=function(i){return document.getElementById(i)};
 function norm(s){return String(s==null?"":s).trim().toUpperCase().replace(/^0+(?=.)/,"")}
 function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
@@ -113,16 +114,17 @@ load(DATA,UPDATED);
 function card(r,i){
   var h='<article class="res" style="animation-delay:'+(i*70)+'ms"><div class="flow"><div class="old"><span>'+esc(oc)+'</span><b>'+esc(r[oc])+'</b></div><div class="arrow">→</div><div class="new"><span>'+esc(nc)+'</span><b>'+esc(r[nc])+'</b></div></div><div class="chips">';
   cols.forEach(function(c){if(c!==oc&&c!==nc)h+='<div class="chip"><span>'+esc(c)+'</span>'+esc(r[c])+'</div>'});
-  h+='</div><div class="btns"><button class="go" data-copy="'+esc(r[nc])+'">Copy old code</button><button class="go gh" data-copy="'+esc(cols.map(function(c){return r[c]}).join("\t"))+'">Copy all details</button></div></article>';
+  h+='</div><div class="btns"><button class="go" data-copy="'+esc(r[nc])+'">Copy old code</button><button class="go gh" data-copy="'+esc(cols.map(function(c){return r[c]}).join("\t"))+'">Copy details</button><button class="go gh" data-copy="'+esc(cols.join("\t")+"\n"+cols.map(function(c){return r[c]}).join("\t"))+'">Copy with headers</button></div></article>';
   return h;
 }
 function single(){
   var v=$("q").value,o=$("out");
   if(!v.trim()||!rows.length){o.innerHTML="";return}
   var n=norm(v),h="";
-  if(idx[n]){idx[n].forEach(function(r,i){h+=card(r,i)})}
+  if(idx[n]){lastRows=idx[n];idx[n].forEach(function(r,i){h+=card(r,i)});
+    h+='<div class="btns" style="margin-top:14px">'+(idx[n].length>1?'<button class="go gh" data-act="copyh">Copy all '+idx[n].length+' rows with headers</button>':'')+'<button class="go gh" data-act="csv">Export CSV</button></div>'}
   else{
-    var p=Object.keys(idx).filter(function(k){return k.indexOf(n)>-1}).slice(0,8);
+    lastRows=[];var p=Object.keys(idx).filter(function(k){return k.indexOf(n)>-1}).slice(0,8);
     h='<p class="miss">No exact match for “'+esc(v.trim())+'”.</p>';
     if(p.length){h+='<div class="sugg">'+p.map(function(k){return '<button data-fill="'+esc(idx[k][0][oc])+'">'+esc(idx[k][0][oc])+'</button>'}).join("")+'</div>'}
   }
@@ -130,6 +132,13 @@ function single(){
 }
 $("q").addEventListener("input",single);
 
+function matrix(rs){return [cols].concat(rs.map(function(r){return cols.map(function(c){return r[c]})}))}
+function toCSV(m){return m.map(function(a){return a.map(function(v){v=String(v==null?"":v);return /[",\n\r]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v}).join(",")}).join("\r\n")}
+function dl(name,text){
+  var a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob(["\ufeff"+text],{type:"text/csv;charset=utf-8"}));
+  a.download=name;document.body.appendChild(a);a.click();a.remove();
+}
 var toastT;
 function toast(){var t=$("toast");t.classList.add("on");clearTimeout(toastT);toastT=setTimeout(function(){t.classList.remove("on")},1100)}
 function copyText(s){
@@ -139,6 +148,8 @@ function fb(s){var a=document.createElement("textarea");a.value=s;document.body.
 document.addEventListener("click",function(e){
   var t=e.target.closest("button");if(!t)return;
   if(t.dataset.copy!==undefined)copyText(t.dataset.copy);
+  if(t.dataset.act==="copyh")copyText(matrix(lastRows).map(function(a){return a.join("\t")}).join("\n"));
+  if(t.dataset.act==="csv"&&lastRows.length)dl("code-lookup.csv",toCSV(matrix(lastRows)));
   if(t.dataset.fill!==undefined){$("q").value=t.dataset.fill;single()}
 });
 
@@ -148,7 +159,7 @@ function tab(a){
 }
 $("t1").onclick=function(){tab(1)};$("t2").onclick=function(){tab(2)};
 
-var tsv="";
+var tsv="",bm=[];
 $("run").onclick=function(){
   var L=$("bulk").value.split(/\r?\n/).map(function(s){return s.trim()}).filter(Boolean);
   var head=["Searched"].concat(cols),t=[head.join("\t")];
@@ -159,9 +170,10 @@ $("run").onclick=function(){
       h+='<tr>'+cells.map(function(x){return '<td>'+esc(x)+'</td>'}).join("")+'</tr>';t.push(cells.join("\t"))})}
     else{h+='<tr><td>'+esc(c)+'</td><td class="nf" colspan="'+cols.length+'">Not found</td></tr>';t.push(c+"\tNot found")}
   });
-  $("bout").innerHTML=h+'</table>';tsv=t.join("\n");
+  $("bout").innerHTML=h+'</table>';tsv=t.join("\n");bm=t.map(function(l){return l.split("\t")});
 };
 $("copy").onclick=function(){if(tsv)copyText(tsv)};
+$("csvb").onclick=function(){if(bm.length)dl("code-lookup-bulk.csv",toCSV(bm))};
 </script>
 </body>
 </html>
